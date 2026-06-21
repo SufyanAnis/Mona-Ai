@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mona J AI — Sales Automation Platform
 
-## Getting Started
+An intelligent sales automation platform for the **Mona J** hair-care brand: 7 AI
+modules on a central data layer, moving customers through the full revenue
+lifecycle — **acquire → engage → convert → support → retain**.
 
-First, run the development server:
+Built on **Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4**.
+
+> Implements the architecture in `MONA_J_AI_BUILD_SPEC.md`: single source of
+> truth, shared Product Expert service, exception paths, event-driven
+> orchestration, and an analytics feedback loop.
+
+---
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install      # already done if scaffolded
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+It runs immediately with **no external services** — a seeded in-memory data
+layer and mock AI/integration adapters back everything. Add API keys to flip
+adapters to live (see `/integrations`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env.local   # add keys as you get them
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+### Central data layer (`src/lib/data/`)
+The single source of truth. No module passes state to another — all handoffs go
+through here.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `types.ts` — entity types (mirrors `schema.sql` exactly)
+- `store.ts` — in-memory repositories (Lead / Conversation / Order / Event / Audit)
+- `seed.ts` — deterministic demo data
+- `schema.sql` — production PostgreSQL DDL + pgvector (the migration target)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Event bus orchestrator (`src/lib/eventBus/`)
+`subscribe → route → process / exception`. Modules subscribe to event types; the
+orchestrator routes each event to the responsible module; exceptions emit their
+own events to recovery flows or human review.
 
-## Deploy on Vercel
+### The seven modules (`src/lib/modules/`)
+`registry.ts` (metadata, phases, gates, exception paths) + `handlers.ts`
+(runtime behaviour). Product Expert is a **shared service**, not a funnel step.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Phase | Modules |
+|---|---|
+| **1 · Live** | Product Expert · Sales Closer · Customer Support |
+| **2 · Next** | Outreach · Appointment Setter |
+| **3 · Future** | Lead Hunter · Account Manager |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Control center (`src/lib/config/`)
+Versioned, audited configuration consumed by every module (targeting, outreach
+rules, operating mode, approval gates, high-value thresholds).
+
+### Analytics (`src/lib/analytics/`)
+Reads the stores only. KPIs, funnel, channel performance, product-query
+intelligence, module activity, revenue — the data that closes the feedback loop.
+
+---
+
+## Pages
+
+| Route | What |
+|---|---|
+| `/` | Analytics dashboard (KPIs, funnel, revenue, channels, activity) |
+| `/leads` · `/leads/[id]` | Lead Store + 360° lead view |
+| `/modules` · `/modules/[id]` | The 7 modules by phase + detail |
+| `/product-expert` | Live RAG console (shared service) |
+| `/events` | Event bus monitor + orchestrator "process pending" |
+| `/control-center` | Configuration layer + catalog + audit log |
+| `/integrations` | Adapter status — what's needed to go live, by phase |
+
+## API routes
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/product-expert/query` | Product Expert shared-service endpoint (spec §5.4) |
+| `GET/POST /api/events` | List events · emit + orchestrate an event |
+| `POST /api/events/process` | Drain pending events through the orchestrator |
+| `GET/PATCH /api/control-center` | Read / update configuration |
+| `GET /api/health` | Liveness + data-layer counts + AI mode |
+
+---
+
+## Going live
+
+1. Drop keys into `.env.local` — adapters detect them and switch MOCK → LIVE.
+2. Set `DATABASE_URL` and run `src/lib/data/schema.sql` to move off the
+   in-memory store onto Postgres (swap the repositories in `store.ts`).
+3. See `/integrations` for the per-phase checklist.
