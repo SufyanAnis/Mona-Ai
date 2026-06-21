@@ -11,6 +11,7 @@ const nav: Array<{ section: string; items: Array<{ href: string; label: string; 
     section: "Overview",
     items: [
       { href: "/", label: "Dashboard", icon: "▦" },
+      { href: "/agents", label: "Agent Autopilot", icon: "⏻" },
       { href: "/leads", label: "Leads", icon: "◷" },
       { href: "/events", label: "Event Bus", icon: "⇄" },
     ],

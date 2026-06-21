@@ -45,6 +45,34 @@ export default function Dashboard() {
         }
       />
 
+      {/* Agentic hero CTA */}
+      <Link href="/agents" className="group mb-6 block">
+        <div className="card relative flex flex-wrap items-center justify-between gap-4 overflow-hidden p-5 transition group-hover:border-accent/40">
+          <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-accent/10 blur-3xl" />
+          <div className="pointer-events-none absolute -left-10 bottom-0 h-32 w-48 rounded-full bg-brand/10 blur-3xl" />
+          <div className="flex items-center gap-4">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-brand text-2xl text-canvas">
+              ⏻
+            </span>
+            <div>
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                Agent Autopilot
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/12 px-2 py-0.5 text-[10px] font-medium text-success">
+                  <span className="h-1.5 w-1.5 rounded-full bg-success live-dot" />
+                  {modules.filter((m) => m.status === "live").length} agents online
+                </span>
+              </p>
+              <p className="mt-0.5 text-xs text-muted">
+                Dispatch the full agent fleet and watch them work in real time.
+              </p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-brand px-4 py-2.5 text-sm font-semibold text-canvas shadow-lg shadow-accent/20 transition group-hover:opacity-90">
+            Open Mission Control →
+          </span>
+        </div>
+      </Link>
+
       {/* Headline KPIs */}
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-6">
         <StatCard label="New Leads" value={kpis.new_leads} sub="across all sources" tone="info" />
