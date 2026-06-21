@@ -31,7 +31,7 @@ export const modules: ModuleSpec[] = [
     name: "Lead Hunter AI",
     tagline: "Autonomous Prospecting Engine",
     phase: 3,
-    status: "live",
+    status: "future",
     responsibilities: [
       "Scrape Google Maps & business directories",
       "Enrich with Apollo / Clay data",
@@ -52,7 +52,7 @@ export const modules: ModuleSpec[] = [
     name: "Outreach AI",
     tagline: "Multi-Channel Communication",
     phase: 2,
-    status: "live",
+    status: "coming_next",
     responsibilities: [
       "Personalize outreach per lead profile",
       "Send via WhatsApp / LinkedIn / Email",
@@ -71,7 +71,7 @@ export const modules: ModuleSpec[] = [
     name: "Appointment Setter AI",
     tagline: "Intelligent Scheduling",
     phase: 2,
-    status: "live",
+    status: "coming_next",
     responsibilities: [
       "Detect meeting intent in replies",
       "Check calendar availability",
@@ -148,7 +148,7 @@ export const modules: ModuleSpec[] = [
     name: "Account Manager AI",
     tagline: "Retention & Growth",
     phase: 3,
-    status: "live",
+    status: "future",
     responsibilities: [
       "Send satisfaction surveys (Day 7)",
       "Collect reviews & testimonials (Day 30)",

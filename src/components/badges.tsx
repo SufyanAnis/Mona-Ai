@@ -19,8 +19,8 @@ const stageTone: Record<LeadStage, Tone> = {
 
 export function StageBadge({ stage }: { stage: LeadStage }) {
   return (
-    <Badge tone={stageTone[stage]}>
-      <Dot tone={stageTone[stage]} />
+    <Badge tone={stageTone[stage]} mono>
+      <Dot tone={stageTone[stage]} pulse={stage === "customer" || stage === "purchase_intent"} />
       {titleCase(stage)}
     </Badge>
   );
@@ -35,7 +35,11 @@ const orderTone: Record<OrderStatus, Tone> = {
 };
 
 export function OrderBadge({ status }: { status: OrderStatus }) {
-  return <Badge tone={orderTone[status]}>{titleCase(status)}</Badge>;
+  return (
+    <Badge tone={orderTone[status]} mono>
+      {titleCase(status)}
+    </Badge>
+  );
 }
 
 const eventTone: Record<EventStatus, Tone> = {
@@ -46,13 +50,17 @@ const eventTone: Record<EventStatus, Tone> = {
 
 export function EventStatusBadge({ status }: { status: EventStatus }) {
   return (
-    <Badge tone={eventTone[status]}>
-      <Dot tone={eventTone[status]} />
+    <Badge tone={eventTone[status]} mono>
+      <Dot tone={eventTone[status]} pulse={status === "pending"} />
       {titleCase(status)}
     </Badge>
   );
 }
 
+/**
+ * Module rollout status — phase-honest labels (bug #1):
+ * Phase 1 = Live, Phase 2 = Coming next, Phase 3 = Planned.
+ */
 const moduleStatusTone: Record<ModuleStatus, Tone> = {
   live: "success",
   coming_next: "warning",
@@ -62,13 +70,13 @@ const moduleStatusTone: Record<ModuleStatus, Tone> = {
 const moduleStatusLabel: Record<ModuleStatus, string> = {
   live: "Live",
   coming_next: "Coming next",
-  future: "Future",
+  future: "Planned",
 };
 
 export function ModuleStatusBadge({ status }: { status: ModuleStatus }) {
   return (
-    <Badge tone={moduleStatusTone[status]}>
-      <Dot tone={moduleStatusTone[status]} />
+    <Badge tone={moduleStatusTone[status]} mono>
+      <Dot tone={moduleStatusTone[status]} pulse={status === "live"} />
       {moduleStatusLabel[status]}
     </Badge>
   );

@@ -1,36 +1,51 @@
 @import "tailwindcss";
 
 /*
- * Mona J AI — design system (architecture v4 visual language).
- * Premium hair-care brand: warm gold + plum on a deep charcoal canvas.
+ * Mona J AI — "Agentic Command Room" design system.
+ * Dark, precise, alive: deep near-black canvas with layered glows + a faint
+ * grid, glassy hairline panels, one electric-cyan signal accent, and semantic
+ * status colors. All values are tokens (CSS variables) — never hardcode.
  */
 
 @theme {
-  --color-canvas: #0b0a0f;
-  --color-panel: #141019;
-  --color-panel-2: #1b1622;
-  --color-elevated: #221b2c;
-  --color-border: #2c2536;
-  --color-border-soft: #221c2b;
+  /* ── Surfaces ── */
+  --color-canvas: #06080a;
+  --color-panel: #0c1014;
+  --color-panel-2: #0f151a;
+  --color-elevated: #141c22;
+  --color-border: #1b242b;
+  --color-border-soft: #131b21;
 
-  --color-ink: #f3eef8;
-  --color-muted: #a99fb6;
-  --color-faint: #6f6680;
+  /* ── Text ── */
+  --color-ink: #e9eff3;
+  --color-muted: #97a5b1;
+  --color-faint: #647480;
 
-  --color-brand: #d9b06a;
-  --color-brand-soft: #f0d49a;
-  --color-accent: #a585ff;
-  --color-accent-soft: #c4adff;
+  /* ── Signal accent (electric cyan → teal) ── */
+  --color-brand: #22d3ee;
+  --color-brand-soft: #8af0fb;
+  --color-accent: #2dd4bf;
+  --color-accent-soft: #6fe7d6;
 
-  --color-success: #4ade80;
-  --color-warning: #fbbf24;
-  --color-danger: #fb7185;
-  --color-info: #60a5fa;
+  /* ── Semantic status ── */
+  --color-success: #34d399; /* live / processed */
+  --color-warning: #fbbf24; /* pending / supervised */
+  --color-danger: #fb7185; /* exception / failed */
+  --color-info: #38bdf8;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* brief-required semantic aliases */
+  --color-live: #34d399;
+  --color-pending: #fbbf24;
+  --color-exception: #fb7185;
+  --color-idle: #647480;
+
+  /* ── Type ── */
+  --font-display: var(--font-space), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-ibm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-ibm-mono), ui-monospace, "JetBrains Mono", monospace;
 
   --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 }
 
 :root {
@@ -43,13 +58,29 @@ html {
 }
 
 body {
-  background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(165, 133, 255, 0.08), transparent 60%),
-    radial-gradient(1000px 500px at -10% 0%, rgba(217, 176, 106, 0.06), transparent 55%),
-    var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  background-color: var(--color-canvas);
+  background-image:
+    radial-gradient(900px 520px at 86% -12%, rgba(34, 211, 238, 0.07), transparent 60%),
+    radial-gradient(820px 520px at -6% 2%, rgba(45, 212, 191, 0.055), transparent 55%),
+    linear-gradient(rgba(255, 255, 255, 0.016) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.016) 1px, transparent 1px);
+  background-size: auto, auto, 42px 42px, 42px 42px;
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.012em;
+}
+
+/* Accessibility: always-visible focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 /* Thin, branded scrollbars */
@@ -57,32 +88,58 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
 }
-*::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-*::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 999px;
-}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 999px; }
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
 
 @utility card {
-  background: linear-gradient(180deg, var(--color-panel-2), var(--color-panel));
+  background: color-mix(in oklab, var(--color-panel) 86%, transparent);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+    0 1px 2px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+}
+
+/* interactive panel lift */
+@utility lift {
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 @utility brand-text {
-  background: linear-gradient(120deg, var(--color-brand-soft), var(--color-brand));
+  background: linear-gradient(120deg, var(--color-brand-soft), var(--color-accent));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* ── Agentic motion layer ─────────────────────────────────────────────── */
+/* monospace data treatment for numbers/IDs/timestamps */
+@utility font-data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+@utility eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.66rem;
+  color: var(--color-faint);
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--color-brand) 45%, var(--color-border));
+  box-shadow: 0 10px 30px -12px rgba(34, 211, 238, 0.25);
+}
+
+/* ── Motion layer ───────────────────────────────────────────────────────── */
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes shimmer {
@@ -90,45 +147,76 @@ body {
   100% { background-position: 200% 0; }
 }
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(165, 133, 255, 0.0), 0 0 18px 0 rgba(217, 176, 106, 0.10); }
-  50% { box-shadow: 0 0 0 1px rgba(165, 133, 255, 0.35), 0 0 26px 2px rgba(165, 133, 255, 0.20); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0), 0 0 16px 0 rgba(34, 211, 238, 0.08); }
+  50% { box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.4), 0 0 26px 2px rgba(34, 211, 238, 0.22); }
 }
 @keyframes ringSpin { to { transform: rotate(360deg); } }
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 @keyframes dotPulse {
-  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
   50% { opacity: 1; transform: scale(1); }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.45; box-shadow: 0 0 0 0 rgba(150, 165, 177, 0.0); }
+  50% { opacity: 1; box-shadow: 0 0 0 3px rgba(150, 165, 177, 0.12); }
 }
 
 .fade-up { animation: fadeUp 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 
-/* "thinking" shimmer for text/blocks while an agent runs */
+/* staggered entrance for a grid/list of cards (no JS) */
+.stagger > * { opacity: 0; animation: fadeUp 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+.stagger > *:nth-child(1) { animation-delay: 0.03s; }
+.stagger > *:nth-child(2) { animation-delay: 0.07s; }
+.stagger > *:nth-child(3) { animation-delay: 0.11s; }
+.stagger > *:nth-child(4) { animation-delay: 0.15s; }
+.stagger > *:nth-child(5) { animation-delay: 0.19s; }
+.stagger > *:nth-child(6) { animation-delay: 0.23s; }
+.stagger > *:nth-child(7) { animation-delay: 0.27s; }
+.stagger > *:nth-child(8) { animation-delay: 0.31s; }
+.stagger > *:nth-child(9) { animation-delay: 0.35s; }
+.stagger > *:nth-child(10) { animation-delay: 0.39s; }
+.stagger > *:nth-child(n + 11) { animation-delay: 0.43s; }
+
 .shimmer {
-  background: linear-gradient(
-    100deg,
-    var(--color-panel-2) 30%,
-    var(--color-elevated) 50%,
-    var(--color-panel-2) 70%
-  );
+  background: linear-gradient(100deg, var(--color-panel-2) 30%, var(--color-elevated) 50%, var(--color-panel-2) 70%);
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }
 
-/* glowing ring around a running agent tile */
-.agent-running { animation: glowPulse 1.8s ease-in-out infinite; border-color: rgba(165,133,255,0.45) !important; }
+/* glowing ring around a running agent */
+.agent-running {
+  animation: glowPulse 1.8s ease-in-out infinite;
+  border-color: rgba(34, 211, 238, 0.45) !important;
+}
 
-/* spinning conic loader */
+/* slow breathing pulse for idle agents */
+.breathe { animation: breathe 3.2s ease-in-out infinite; }
+
 .spinner {
   width: 14px; height: 14px; border-radius: 999px;
-  background: conic-gradient(from 0deg, transparent, var(--color-accent));
+  background: conic-gradient(from 0deg, transparent, var(--color-brand));
   -webkit-mask: radial-gradient(closest-side, transparent 62%, #000 64%);
   mask: radial-gradient(closest-side, transparent 62%, #000 64%);
   animation: ringSpin 0.8s linear infinite;
 }
 
-.cursor-blink::after { content: "▋"; animation: blink 1s step-end infinite; color: var(--color-accent); margin-left: 2px; }
+.cursor-blink::after {
+  content: "▋";
+  animation: blink 1s step-end infinite;
+  color: var(--color-brand);
+  margin-left: 2px;
+}
 
 .live-dot { animation: dotPulse 1.4s ease-in-out infinite; }
-
-/* terminal-style activity console */
 .console-line { animation: fadeUp 0.3s ease both; }
+
+/* Respect reduced-motion: disable non-essential animation */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .stagger > * { opacity: 1 !important; }
+}

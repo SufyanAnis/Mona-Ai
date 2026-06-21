@@ -39,21 +39,22 @@ export default async function LeadDetail({ params }: PageProps<"/leads/[id]">) {
           <Card>
             <SectionTitle title="Profile" />
             <dl className="space-y-2.5 text-sm">
-              <Row label="Score" value={<span className="font-semibold text-brand-soft">{lead.score}/100</span>} />
-              <Row label="Source" value={titleCase(lead.source)} />
+              <Row label="Score" value={<span className="font-data font-semibold text-brand-soft">{lead.score}/100</span>} />
+              <Row label="Source" value={<span className="font-mono">{titleCase(lead.source)}</span>} />
               <Row label="Stage" value={<StageBadge stage={lead.stage} />} />
               <Row
                 label="Consent"
                 value={
-                  <Badge tone={lead.consent_status === "opted_in" ? "success" : lead.consent_status === "opted_out" ? "danger" : "warning"}>
+                  <Badge tone={lead.consent_status === "opted_in" ? "success" : lead.consent_status === "opted_out" ? "danger" : "warning"} mono>
                     {titleCase(lead.consent_status)}
                   </Badge>
                 }
               />
-              <Row label="Email" value={lead.email} />
-              <Row label="Phone" value={lead.phone} />
-              <Row label="WhatsApp" value={lead.whatsapp} />
-              <Row label="Created" value={shortDate(lead.created_at)} />
+              <Row label="Email" value={<span className="font-mono text-xs">{lead.email}</span>} />
+              <Row label="Phone" value={<span className="font-mono text-xs">{lead.phone}</span>} />
+              <Row label="WhatsApp" value={<span className="font-mono text-xs">{lead.whatsapp}</span>} />
+              <Row label="Created" value={<span className="font-mono text-xs">{shortDate(lead.created_at)}</span>} />
+              <Row label="Lead ID" value={<span className="font-mono text-xs text-faint">{lead.id}</span>} />
             </dl>
           </Card>
 
@@ -120,7 +121,7 @@ export default async function LeadDetail({ params }: PageProps<"/leads/[id]">) {
                   {orders.map((o) => (
                     <div key={o.id} className="rounded-lg border border-border-soft bg-panel-2 p-3">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-ink">{pkr(o.total_pkr)}</span>
+                        <span className="font-data font-semibold text-ink">{pkr(o.total_pkr)}</span>
                         <OrderBadge status={o.status} />
                       </div>
                       <p className="mt-1 text-xs text-faint">

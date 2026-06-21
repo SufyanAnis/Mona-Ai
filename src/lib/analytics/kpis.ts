@@ -42,7 +42,6 @@ export interface FunnelStage {
 
 export function getFunnel(): FunnelStage[] {
   const all = leads.all();
-  // Cumulative funnel: each stage counts leads that reached it or beyond.
   const order: LeadStage[] = [
     "new",
     "contacted",
@@ -59,12 +58,18 @@ export function getFunnel(): FunnelStage[] {
     purchase_intent: "Purchase Intent",
     customer: "Closed",
   };
-  const rank = (s: LeadStage) => order.indexOf(s);
-  return order.map((stage) => ({
+  // Single source of truth: stage 0 (New Leads) counts EVERY lead, so it equals
+  // the "New Leads" KPI (getKpis().new_leads = leads.all().length). Churned and
+  // suppressed leads exit the pipeline, so they're counted only at entry (rank 0)
+  // — this keeps counts monotonically non-increasing and conversion ≤ 100%.
+  const rankOf = (s: LeadStage) => {
+    const i = order.indexOf(s);
+    return i >= 0 ? i : 0;
+  };
+  return order.map((stage, idx) => ({
     stage,
     label: labels[stage],
-    // exclude churned/suppressed from the active funnel
-    count: all.filter((l) => rank(l.stage) >= rank(stage) && rank(l.stage) >= 0).length,
+    count: all.filter((l) => rankOf(l.stage) >= idx).length,
   }));
 }
 

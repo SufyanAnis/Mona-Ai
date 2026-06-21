@@ -26,6 +26,12 @@ export function relativeTime(iso: string): string {
   return new Date(iso).toLocaleDateString("en-PK", { day: "numeric", month: "short" });
 }
 
+/** "1 event", "2 events". Pass an explicit plural for irregular words. */
+export function plural(count: number, singular: string, pluralForm?: string): string {
+  const word = count === 1 ? singular : (pluralForm ?? `${singular}s`);
+  return `${count} ${word}`;
+}
+
 export function shortDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-PK", {
     day: "numeric",
